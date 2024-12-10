@@ -1,23 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useLoaderData } from 'react-router-dom'
 
 import Post from './Post'
-import NewPost from './NewPost'
-import Modal from './Modal'
 import classes from './PostsList.module.css'
 
 
-function PostsList({ isPosting, onStopPosting }) {
-    const [posts, setPosts] = useState([])
-
-    useEffect(() => {
-        async function fecthPosts() {
-           const response = await fetch('http://localhost:8080/posts')
-           const resData = await response.json();
-           setPosts(resData.posts);
-        } 
-        
-        fecthPosts();
-    }, []);
+function PostsList() {
+    const posts =  useLoaderData()
 
     function addPostHandler(postData) {
         fetch('http://localhost:8080/posts', {
@@ -32,14 +20,7 @@ function PostsList({ isPosting, onStopPosting }) {
 
     return (
         <>
-            {isPosting && (
-                <Modal onClose={onStopPosting}>
-                    <NewPost
-                        onCancel={onStopPosting}
-                        onAddPost={addPostHandler}
-                    />
-                </Modal>
-            )}
+            
             {posts.length > 0 && (
                 <ul className={classes.posts}>
                     {posts.map((post) => <Post key={post.body} author={post.author} body={post.body} />)}
@@ -51,6 +32,7 @@ function PostsList({ isPosting, onStopPosting }) {
                     <p>Tambahkan post</p>
                 </div>
             )}
+        
         </>
     )
 }
